@@ -77,9 +77,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .hero-eyebrow::before{content:'';display:block;width:24px;height:1px;background:var(--accent);}
 .hero-title{
   font-family:'Space Grotesk',sans-serif;
-  font-size:clamp(2rem,4vw,3.2rem);font-weight:700;letter-spacing:-.04em;line-height:1.05;margin-bottom:1rem;
+  font-size:clamp(2.2rem,4.5vw,3.8rem);font-weight:700;letter-spacing:-.05em;line-height:1.0;margin-bottom:1rem;
 }
-.hero-title em{color:var(--accent);font-style:normal;}
+.hero-title em{color:var(--accent);font-style:normal;position:relative;}
 .hero-subtitle{
   font-family:'DM Mono',monospace;font-size:13px;letter-spacing:.08em;
   color:var(--sub);text-transform:uppercase;margin-top:.5rem;margin-bottom:.85rem;
@@ -167,6 +167,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .row-cat{font-family:'DM Mono',monospace;font-size:12px;color:var(--sub);white-space:nowrap;}
 .row-date{font-family:'DM Mono',monospace;font-size:12px;color:var(--sub);white-space:nowrap;}
 .row-arrow{font-size:14px;color:var(--accent);opacity:0;transform:translateX(-6px);transition:all .18s;text-align:right;}
+.row-card-foot{display:none;}
 
 /* 배지 */
 .badge{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;flex-shrink:0;}
@@ -241,16 +242,26 @@ footer{
 .step-desc{font-size:13px;color:#888;line-height:1.75;}
 .step-desc b{color:#c8c8c6;font-weight:500;}
 .step-warn{
-  display:flex;align-items:flex-start;gap:.5rem;
   margin-top:.6rem;padding:.6rem .8rem;
   background:rgba(255,180,0,.07);border:1px solid rgba(255,180,0,.2);border-radius:8px;
-  font-size:12.5px;color:#f5c842;line-height:1.6;
+  font-size:12.5px;color:#f5c842;line-height:1.75;word-break:keep-all;
 }
 .step-tip{
   margin-top:.6rem;padding:.6rem .8rem;
   background:rgba(99,179,255,.06);border:1px solid rgba(99,179,255,.15);border-radius:8px;
   font-size:12.5px;color:#63b3ff;line-height:1.6;
 }
+
+
+/* ─── 토스트 ─── */
+.toast{
+  position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#1e1e1e;border:1px solid rgba(255,255,255,.12);border-radius:10px;
+  padding:.7rem 1.25rem;font-size:13px;color:#f0f0ee;
+  opacity:0;transition:all .25s;z-index:999;white-space:nowrap;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast-icon{color:var(--accent);margin-right:6px;}
 
 /* ─── 반응형 ─── */
 @media(max-width:900px){
@@ -259,14 +270,73 @@ footer{
   .list-col-header .col-desc,.list-col-header .col-date,.app-row .row-desc-col,.app-row .row-date{display:none;}
   .hero-inner{grid-template-columns:1fr 180px;gap:1.5rem;}
 }
+
+/* ─── 모바일 전용 ─── */
 @media(max-width:640px){
-  :root{--px:1.25rem;}
+  :root{--px:1.1rem;}
   .search-wrap,.threads-btn{display:none;}
   .hero-char{display:none;}
-  .hero-stats{gap:1.5rem;}
-  .list-col-header,.app-row{grid-template-columns:28px 1fr 28px;}
-  .list-col-header .col-cat,.app-row .row-cat{display:none;}
+
+  .hero{padding:2rem var(--px) 1.5rem;}
+  .hero-title{font-size:clamp(1.8rem,8vw,2.4rem);}
+  .hero-desc{font-size:13px;}
+  .hero-stats{gap:1.25rem;margin-top:1.25rem;padding-top:1.25rem;}
+  .stat-num{font-size:1.3rem;}
+  .stat-lbl{font-size:11px;}
+
+  .filter-wrap{
+    padding:.75rem var(--px);
+    flex-wrap:nowrap;overflow-x:auto;gap:6px;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  }
+  .filter-wrap::-webkit-scrollbar{display:none;}
+  .chip{white-space:nowrap;flex-shrink:0;font-size:12px;padding:.35rem .85rem;}
+
+  /* 리스트 → 카드 */
+  .list-wrap{padding:0 var(--px) 3rem;}
+  .list-col-header{display:none;}
+
+  .app-row{
+    display:flex;flex-direction:column;gap:0;
+    padding:.9rem .95rem;margin-bottom:8px;
+    border:1px solid var(--border);border-radius:12px;
+    background:var(--surface);
+  }
+  .app-row::before{left:0;right:0;border-radius:12px;}
+  .app-row:hover::before{opacity:1;}
+  .app-row>*{position:relative;z-index:1;}
+
+  .row-num{display:none;}
+  .row-main{margin-bottom:5px;}
+  .row-name{
+    font-size:14.5px;font-weight:500;
+    white-space:normal;overflow:visible;text-overflow:unset;
+    line-height:1.35;
+  }
+  .row-desc-col{
+    font-size:12px;color:var(--sub);
+    white-space:normal;overflow:visible;text-overflow:unset;
+    line-height:1.6;margin-bottom:8px;display:block;
+  }
+  .row-card-foot{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-top:7px;border-top:1px solid var(--border);
+  }
+  .row-card-foot{display:flex;}
+  .row-cat{
+    font-size:11px;padding:2px 8px;
+    background:var(--surface2);border-radius:10px;
+    border:1px solid var(--border);
+  }
+  .row-date{font-size:11px;color:var(--muted);}
+  .row-arrow{display:none;}
+  .row-arrow-m{
+    font-size:13px;color:var(--accent);
+    background:var(--accent-glow);border-radius:6px;
+    padding:3px 10px;
+  }
 }
+
 </style>
 </head>
 <body>
@@ -392,7 +462,7 @@ footer{
           구글 권한 승인 화면이 나타나면 <b>'권한 검토' → 계정 선택</b>을 진행하세요.<br>
           <b>'Google에서 확인하지 않은 앱'</b> 경고가 뜰 수 있는데 정상이에요.
         </div>
-        <div class="step-warn">⚠ <b>'고급'</b> 클릭 → <b>'(앱 이름)으로 이동(안전하지 않음)'</b> 클릭 → <b>'허용'</b> 버튼을 눌러주세요. kimju.zip 앱은 개인 정보를 수집하지 않으니 안심하세요!</div>
+        <div class="step-warn">⚠ <b>'고급'</b> 클릭 → <b>'(앱 이름)으로 이동(안전하지 않음)'</b> 클릭 → <b>'허용'</b><br>kimju.zip 앱은 개인 정보를 수집하지 않으니 안심하세요!</div>
       </div>
     </div>
 
@@ -488,7 +558,7 @@ function renderList(){
     const badgeHTML = a.badge==='as' ? '<span class="badge badge-as">A/S</span>'
       : a.badge==='doc' ? '<span class="badge badge-doc">자료</span>'
       : a.badge==='prompt' ? '<span class="badge badge-prompt">AI</span>' : '';
-    return `<a class="app-row" href="${a.url}" target="_blank">
+    return `<a class="app-row" href="${a.url}" target="_blank" onclick="showToast()">
       <span class="row-num">${String(i+1).padStart(2,'0')}</span>
       <div class="row-main">
         <div class="row-name">${a.name}${badgeHTML}</div>
@@ -497,6 +567,11 @@ function renderList(){
       <span class="row-cat">${a.cat}</span>
       <span class="row-date">${a.date}</span>
       <span class="row-arrow">→</span>
+      <div class="row-card-foot">
+        <span class="row-cat">${a.cat}</span>
+        <span class="row-date">${a.date}</span>
+        <span class="row-arrow-m">열기 →</span>
+      </div>
     </a>`;
   }).join('');
 }
@@ -507,6 +582,14 @@ document.getElementById('searchInput').addEventListener('input',e=>{
 
 renderFilter();
 renderList();
+
+function showToast(){
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
 </script>
+<div class="toast" id="toast"><span class="toast-icon">📋</span>구글 시트로 이동합니다</div>
 </body>
 </html>
